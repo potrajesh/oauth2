@@ -16,6 +16,11 @@ public class SecureController {
         System.out.println("++++++++++++++++++++++++++");
         return "secure.html";
     }
+    @GetMapping("apiaccess") // Added base path for consistency
+    public String getApiAccess() {
+        System.out.println("++++++++++++++++++++++++++");
+        return "secure.html";
+    }
     //after login success from github its call to below method
     @GetMapping("/") // /api/
     public String welcomePage(@AuthenticationPrincipal OAuth2User principal) {
