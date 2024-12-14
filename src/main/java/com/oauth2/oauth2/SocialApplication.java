@@ -22,8 +22,8 @@ public class SocialApplication {
     public SecurityFilterChain defaultSecurityChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("secure").authenticated() // Secured endpoint
-                        .requestMatchers("unsecure").access((authentication, context) -> {
+                        .requestMatchers("/secure").authenticated() // Secured endpoint
+                        .requestMatchers("/unsecure").access((authentication, context) -> {
                             String userAgent = context.getRequest().getHeader("User-Agent");
                             if (userAgent != null && isBrowser(userAgent)) {
                                 throw new AccessDeniedException("Browser access is not allowed");
@@ -32,8 +32,9 @@ public class SocialApplication {
                         })
                         .anyRequest().permitAll() // Permit all other requests
                 )
-                .oauth2Login(org.springframework.security.config.Customizer.withDefaults())
-                .exceptionHandling(ex -> ex
+                .oauth2Login(oauth -> oauth
+                        .defaultSuccessUrl("/", true) // Redirect to /secure after successful login
+                )                .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Access Denied");
                         })
